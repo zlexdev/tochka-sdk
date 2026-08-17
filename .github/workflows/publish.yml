@@ -1,0 +1,77 @@
+name: publish
+
+# Publishes on a version tag (`v0.1.0`). Trusted Publishing (OIDC) — no PyPI token in
+# secrets: the token is what leaks, and there is nothing to leak here.
+# Configure once at https://pypi.org/manage/project/tochka-sdk/settings/publishing/
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: read
+
+jobs:
+  gate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install
+        run: pip install -e ".[dev,webhooks]"
+
+      # A tag must not ship what `main` would have failed on.
+      - name: Gate
+        run: |
+          ruff check tochka dev scripts tests
+          mypy tochka
+          pytest tests -q
+          python scripts/lint_spec_bindings.py --strict
+
+      - name: Tag must match the packaged version
+        run: |
+          tag="${GITHUB_REF_NAME#v}"
+          packaged=$(python -c "import tochka; print(tochka.__version__)")
+          if [ "$tag" != "$packaged" ]; then
+            echo "::error::тег $tag не совпадает с tochka.__version__ = $packaged"
+            exit 1
+          fi
+
+  build:
+    needs: gate
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Build
+        run: |
+          pip install build twine
+          python -m build
+          twine check dist/*
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: dist/
+
+  publish:
+    needs: build
+    runs-on: ubuntu-latest
+    environment: pypi
+    permissions:
+      id-token: write   # required for Trusted Publishing
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: dist/
+
+      - uses: pypa/gh-action-pypi-publish@release/v1

@@ -1,0 +1,2016 @@
+{
+  "components": {
+    "schemas": {}
+  },
+  "info": {
+    "title": "Точка: экспресс-кредит",
+    "version": "portal"
+  },
+  "openapi": "3.0.3",
+  "paths": {
+    "/expresscredit/{apiVersion}/application/activation/refuse": {
+      "post": {
+        "description": "Метод для отказа при активации",
+        "operationId": "activation_refuse",
+        "parameters": [
+          {
+            "description": "Версия API",
+            "in": "path",
+            "name": "apiVersion",
+            "required": true,
+            "schema": {
+              "description": "Версия API",
+              "enum": [
+                "v1.0"
+              ],
+              "title": "ApiVersion",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "Data": {
+                    "properties": {
+                      "applicationId": {
+                        "description": "ID кредитной заявки",
+                        "title": "Applicationid",
+                        "type": "string"
+                      },
+                      "refuseReason": {
+                        "description": "Причина ошибки",
+                        "title": "Refusereason",
+                        "type": "string"
+                      },
+                      "result": {
+                        "description": "Результат процесса активации",
+                        "enum": [
+                          "REJECT",
+                          "ERROR",
+                          "HOLD"
+                        ],
+                        "title": "ActivationRefuseResult",
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "applicationId",
+                      "result",
+                      "refuseReason"
+                    ],
+                    "title": "ExpresscreditActivationRefuseRequestModel",
+                    "type": "object"
+                  },
+                  "Risks": {
+                    "additionalProperties": true,
+                    "title": "Risks",
+                    "type": "object"
+                  }
+                },
+                "required": [
+                  "Data"
+                ],
+                "title": "ExpresscreditActivationRefuseRequestDataModel",
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "Data": {
+                      "properties": {
+                        "success": {
+                          "title": "Success",
+                          "type": "boolean"
+                        }
+                      },
+                      "required": [
+                        "success"
+                      ],
+                      "title": "ExpresscreditSuccessResponseModel",
+                      "type": "object"
+                    },
+                    "Links": {
+                      "properties": {
+                        "self": {
+                          "examples": [
+                            "https://enter.tochka.com/uapi"
+                          ],
+                          "format": "uri",
+                          "maxLength": 2083,
+                          "minLength": 1,
+                          "title": "Self",
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "self"
+                      ],
+                      "title": "LinkModel",
+                      "type": "object"
+                    },
+                    "Meta": {
+                      "properties": {
+                        "totalPages": {
+                          "examples": [
+                            1
+                          ],
+                          "title": "Totalpages",
+                          "type": "integer"
+                        }
+                      },
+                      "required": [
+                        "totalPages"
+                      ],
+                      "title": "MetaModel",
+                      "type": "object"
+                    }
+                  },
+                  "required": [
+                    "Data",
+                    "Links",
+                    "Meta"
+                  ],
+                  "title": "ExpresscreditSuccessResponseDataModel",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "Errors": {
+                      "items": {
+                        "properties": {
+                          "errorCode": {
+                            "examples": [
+                              "HTTPBadRequest"
+                            ],
+                            "title": "Низкоуровневое текстовое описание ошибки",
+                            "type": "string"
+                          },
+                          "message": {
+                            "examples": [
+                              "Something going wrong"
+                            ],
+                            "maxLength": 603,
+                            "title": "Описание ошибки. Обрезается если длина ошибки превышает максимальное значение",
+                            "type": "string"
+                          },
+                          "url": {
+                            "examples": [
+                              "\"http://enter.tochka.com/open-banking/docs\""
+                            ],
+                            "title": "URL для помощи в устранении проблемы",
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "errorCode",
+                          "message",
+                          "url"
+                        ],
+                        "title": "BadRequestError",
+                        "type": "object"
+                      },
+                      "title": "Errors",
+                      "type": "array"
+                    },
+                    "code": {
+                      "examples": [
+                        "400"
+                      ],
+                      "maxLength": 40,
+                      "title": "Высокоуровневый текстовый код ошибки, необходимый для классификации.",
+                      "type": "string"
+                    },
+                    "id": {
+                      "examples": [
+                        "c397b21a-d998-4c4d-9471-e60eaf816b87"
+                      ],
+                      "maxLength": 40,
+                      "title": "Уникальный идентификатор ошибки, для целей аудита",
+                      "type": "string"
+                    },
+                    "message": {
+                      "examples": [
+                        "Что-то пошло не так"
+                      ],
+                      "maxLength": 600,
+                      "title": "Краткое сообщение об ошибке.",
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "id",
+                    "message",
+                    "Errors"
+                  ],
+                  "title": "BadRequestErrorResponse",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Bad Request"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "Errors": {
+                      "items": {
+                        "properties": {
+                          "errorCode": {
+                            "examples": [
+                              "HTTPUnauthorized"
+                            ],
+                            "title": "Низкоуровневое текстовое описание ошибки",
+                            "type": "string"
+                          },
+                          "message": {
+                            "examples": [
+                              "Something going wrong"
+                            ],
+                            "maxLength": 603,
+                            "title": "Описание ошибки. Обрезается если длина ошибки превышает максимальное значение",
+                            "type": "string"
+                          },
+                          "url": {
+                            "examples": [
+                              "\"http://enter.tochka.com/open-banking/docs\""
+                            ],
+                            "title": "URL для помощи в устранении проблемы",
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "errorCode",
+                          "message",
+                          "url"
+                        ],
+                        "title": "UnauthorizedError",
+                        "type": "object"
+                      },
+                      "title": "Errors",
+                      "type": "array"
+                    },
+                    "code": {
+                      "examples": [
+                        "401"
+                      ],
+                      "maxLength": 40,
+                      "title": "Высокоуровневый текстовый код ошибки, необходимый для классификации.",
+                      "type": "string"
+                    },
+                    "id": {
+                      "examples": [
+                        "c397b21a-d998-4c4d-9471-e60eaf816b87"
+                      ],
+                      "maxLength": 40,
+                      "title": "Уникальный идентификатор ошибки, для целей аудита",
+                      "type": "string"
+                    },
+                    "message": {
+                      "examples": [
+                        "Что-то пошло не так"
+                      ],
+                      "maxLength": 600,
+                      "title": "Краткое сообщение об ошибке.",
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "id",
+                    "message",
+                    "Errors"
+                  ],
+                  "title": "UnauthorizedErrorResponse",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "Errors": {
+                      "items": {
+                        "properties": {
+                          "errorCode": {
+                            "examples": [
+                              "HTTPForbidden"
+                            ],
+                            "title": "Низкоуровневое текстовое описание ошибки",
+                            "type": "string"
+                          },
+                          "message": {
+                            "examples": [
+                              "Something going wrong"
+                            ],
+                            "maxLength": 603,
+                            "title": "Описание ошибки. Обрезается если длина ошибки превышает максимальное значение",
+                            "type": "string"
+                          },
+                          "url": {
+                            "examples": [
+                              "\"http://enter.tochka.com/open-banking/docs\""
+                            ],
+                            "title": "URL для помощи в устранении проблемы",
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "errorCode",
+                          "message",
+                          "url"
+                        ],
+                        "title": "ForbiddenError",
+                        "type": "object"
+                      },
+                      "title": "Errors",
+                      "type": "array"
+                    },
+                    "code": {
+                      "examples": [
+                        "403"
+                      ],
+                      "maxLength": 40,
+                      "title": "Высокоуровневый текстовый код ошибки, необходимый для классификации.",
+                      "type": "string"
+                    },
+                    "id": {
+                      "examples": [
+                        "c397b21a-d998-4c4d-9471-e60eaf816b87"
+                      ],
+                      "maxLength": 40,
+                      "title": "Уникальный идентификатор ошибки, для целей аудита",
+                      "type": "string"
+                    },
+                    "message": {
+                      "examples": [
+                        "Что-то пошло не так"
+                      ],
+                      "maxLength": 600,
+                      "title": "Краткое сообщение об ошибке.",
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "id",
+                    "message",
+                    "Errors"
+                  ],
+                  "title": "ForbiddenErrorResponse",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "Errors": {
+                      "items": {
+                        "properties": {
+                          "errorCode": {
+                            "examples": [
+                              "HTTPNotFound"
+                            ],
+                            "title": "Низкоуровневое текстовое описание ошибки",
+                            "type": "string"
+                          },
+                          "message": {
+                            "examples": [
+                              "Something going wrong"
+                            ],
+                            "maxLength": 603,
+                            "title": "Описание ошибки. Обрезается если длина ошибки превышает максимальное значение",
+                            "type": "string"
+                          },
+                          "url": {
+                            "examples": [
+                              "\"http://enter.tochka.com/open-banking/docs\""
+                            ],
+                            "title": "URL для помощи в устранении проблемы",
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "errorCode",
+                          "message",
+                          "url"
+                        ],
+                        "title": "NotFoundError",
+                        "type": "object"
+                      },
+                      "title": "Errors",
+                      "type": "array"
+                    },
+                    "code": {
+                      "examples": [
+                        "404"
+                      ],
+                      "maxLength": 40,
+                      "title": "Высокоуровневый текстовый код ошибки, необходимый для классификации.",
+                      "type": "string"
+                    },
+                    "id": {
+                      "examples": [
+                        "c397b21a-d998-4c4d-9471-e60eaf816b87"
+                      ],
+                      "maxLength": 40,
+                      "title": "Уникальный идентификатор ошибки, для целей аудита",
+                      "type": "string"
+                    },
+                    "message": {
+                      "examples": [
+                        "Что-то пошло не так"
+                      ],
+                      "maxLength": 600,
+                      "title": "Краткое сообщение об ошибке.",
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "id",
+                    "message",
+                    "Errors"
+                  ],
+                  "title": "NotFoundErrorResponse",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "Errors": {
+                      "items": {
+                        "properties": {
+                          "errorCode": {
+                            "examples": [
+                              "HTTPInternalError"
+                            ],
+                            "title": "Низкоуровневое текстовое описание ошибки",
+                            "type": "string"
+                          },
+                          "message": {
+                            "examples": [
+                              "Something going wrong"
+                            ],
+                            "maxLength": 603,
+                            "title": "Описание ошибки. Обрезается если длина ошибки превышает максимальное значение",
+                            "type": "string"
+                          },
+                          "url": {
+                            "examples": [
+                              "\"http://enter.tochka.com/open-banking/docs\""
+                            ],
+                            "title": "URL для помощи в устранении проблемы",
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "errorCode",
+                          "message",
+                          "url"
+                        ],
+                        "title": "ErrorModel",
+                        "type": "object"
+                      },
+                      "title": "Подробное описание ошибок",
+                      "type": "array"
+                    },
+                    "code": {
+                      "examples": [
+                        "500"
+                      ],
+                      "maxLength": 40,
+                      "title": "Высокоуровневый текстовый код ошибки, необходимый для классификации.",
+                      "type": "string"
+                    },
+                    "id": {
+                      "examples": [
+                        "c397b21a-d998-4c4d-9471-e60eaf816b87"
+                      ],
+                      "maxLength": 40,
+                      "title": "Уникальный идентификатор ошибки, для целей аудита",
+                      "type": "string"
+                    },
+                    "message": {
+                      "examples": [
+                        "Что-то пошло не так"
+                      ],
+                      "maxLength": 600,
+                      "title": "Краткое сообщение об ошибке.",
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "id",
+                    "message",
+                    "Errors"
+                  ],
+                  "title": "ErrorResponse",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Server error"
+          }
+        },
+        "servers": [
+          {
+            "description": "Боевой сервер Production",
+            "url": "https://enter.tochka.com/uapi/"
+          },
+          {
+            "description": "Сервер песочницы",
+            "url": "https://enter.tochka.com/sandbox/v2/"
+          }
+        ],
+        "tags": [
+          "Работа с Экспресс кредитами"
+        ],
+        "x-portal-url": "https://developers.tochka.com/docs/express-credit/api/activation-refuse-expresscredit-api-version-application-activation-refuse-post"
+      }
+    },
+    "/expresscredit/{apiVersion}/loans_change": {
+      "post": {
+        "description": "Метод для передачи данных по активному кредиту",
+        "operationId": "loans_change",
+        "parameters": [
+          {
+            "description": "Версия API",
+            "in": "path",
+            "name": "apiVersion",
+            "required": true,
+            "schema": {
+              "description": "Версия API",
+              "enum": [
+                "v1.0"
+              ],
+              "title": "ApiVersion",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "Data": {
+                    "properties": {
+                      "id": {
+                        "description": "requestId запроса Точки на кредит",
+                        "title": "Id",
+                        "type": "string"
+                      },
+                      "inn": {
+                        "description": "ИНН компании",
+                        "title": "Inn",
+                        "type": "string"
+                      },
+                      "loans": {
+                        "description": "Список кредитов",
+                        "items": {
+                          "properties": {
+                            "graphPayment": {
+                              "description": "График платежей",
+                              "items": {
+                                "properties": {
+                                  "debtAmount": {
+                                    "description": "Основной долг",
+                                    "example": "1234.00",
+                                    "title": "Debtamount",
+                                    "type": "number"
+                                  },
+                                  "payedAmount": {
+                                    "description": "Оплаченная сумма",
+                                    "example": "1234.00",
+                                    "title": "Payedamount",
+                                    "type": "number"
+                                  },
+                                  "paymentAmount": {
+                                    "description": "Сумма платежа",
+                                    "example": "1234.00",
+                                    "title": "Paymentamount",
+                                    "type": "number"
+                                  },
+                                  "paymentDate": {
+                                    "description": "Дата платежа",
+                                    "title": "Paymentdate",
+                                    "type": "string"
+                                  },
+                                  "percentAmount": {
+                                    "description": "Проценты (комиссия)",
+                                    "example": "1234.00",
+                                    "title": "Percentamount",
+                                    "type": "number"
+                                  },
+                                  "remainAmount": {
+                                    "description": "Остаток основного долга",
+                                    "example": "1234.00",
+                                    "title": "Remainamount",
+                                    "type": "number"
+                                  }
+                                },
+                                "required": [
+                                  "paymentDate",
+                                  "paymentAmount",
+                                  "debtAmount",
+                                  "percentAmount",
+                                  "payedAmount"
+                                ],
+                                "title": "ExpresscreditLoanPayment",
+                                "type": "object"
+                              },
+                              "title": "Graphpayment",
+                              "type": "array"
+                            },
+                            "info": {
+                              "description": "Информация по кредиту",
+                              "properties": {
+                                "amount": {
+                                  "description": "Сумма, на которую выдали кредит",
+                                  "example": "1234.00",
+                                  "title": "Amount",
+                                  "type": "number"
+                                },
+                                "baseRate": {
+                                  "description": "Ставка (комиссия)",
+                                  "example": "1234.00",
+                                  "title": "Baserate",
+                                  "type": "number"
+                                },
+                                "contractId": {
+                                  "description": "Id кредита в вызывающей системе (номер договора)",
+                                  "title": "Contractid",
+                                  "type": "string"
+                                },
+                                "contractNumber": {
+                                  "description": "Номер кредитного договора",
+                                  "title": "Contractnumber",
+                                  "type": "string"
+                                },
+                                "issueDate": {
+                                  "description": "Дата выдачи кредита",
+                                  "title": "Issuedate",
+                                  "type": "string"
+                                },
+                                "loanTerm": {
+                                  "description": "Срок кредитования, мес.",
+                                  "title": "Loanterm",
+                                  "type": "integer"
+                                },
+                                "overPercentsTotal": {
+                                  "description": "Просроченная комиссия (проценты), начисленная на текущий",
+                                  "example": "1234.00",
+                                  "title": "Overpercentstotal",
+                                  "type": "number"
+                                },
+                                "overPrincipalTotal": {
+                                  "description": "Просроченная задолженность по кредиту на текущий момент",
+                                  "example": "1234.00",
+                                  "title": "Overprincipaltotal",
+                                  "type": "number"
+                                },
+                                "paidOverPercentsTotal": {
+                                  "description": "Оплаченная просроченная комиссия (проценты)",
+                                  "example": "1234.00",
+                                  "title": "Paidoverpercentstotal",
+                                  "type": "number"
+                                },
+                                "paidOverPrincipalTotal": {
+                                  "description": "Оплаченная просроченная задолженность",
+                                  "example": "1234.00",
+                                  "title": "Paidoverprincipaltotal",
+                                  "type": "number"
+                                },
+                                "paidPenOverPercentsTotal": {
+                                  "description": "Оплаченные пени за просроченные проценты (Общая)",
+                                  "example": "1234.00",
+                                  "title": "Paidpenoverpercentstotal",
+                                  "type": "number"
+                                },
+                                "paidPenOverPrincipalTotal": {
+                                  "description": "Оплаченные пени (штрафы) за просроченный основной долг (Общая)",
+                                  "example": "1234.00",
+                                  "title": "Paidpenoverprincipaltotal",
+                                  "type": "number"
+                                },
+                                "paidPercentsOverDebt": {
+                                  "description": "Оплаченные проценты на просроченный основной долг",
+                                  "example": "1234.00",
+                                  "title": "Paidpercentsoverdebt",
+                                  "type": "number"
+                                },
+                                "penOverPercentsTotal": {
+                                  "description": "Пени за просроченные проценты (Начисленные на текущий момент)",
+                                  "example": "1234.00",
+                                  "title": "Penoverpercentstotal",
+                                  "type": "number"
+                                },
+                                "penOverPrincipalTotal": {
+                                  "description": "Пени (штраф) за просроченный основной долг, начисленные на текущий момент",
+                                  "example": "1234.00",
+                                  "title": "Penoverprincipaltotal",
+                                  "type": "number"
+                                },
+                                "percentAccrued": {
+                                  "description": "Проценты текущие",
+                                  "example": "1234.00",
+                                  "title": "Percentaccrued",
+                                  "type": "number"
+                                },
+                                "percentsOverDebt": {
+                                  "description": "Проценты на просроченный основной долг",
+                                  "example": "1234.00",
+                                  "title": "Percentsoverdebt",
+                                  "type": "number"
+                                },
+                                "productName": {
+                                  "description": "Наименование продукта",
+                                  "title": "Productname",
+                                  "type": "string"
+                                },
+                                "remainAmount": {
+                                  "description": "Остаток основного долга",
+                                  "example": "1234.00",
+                                  "title": "Remainamount",
+                                  "type": "number"
+                                },
+                                "status": {
+                                  "description": "Статус кредита",
+                                  "enum": [
+                                    "AVAILABLE",
+                                    "CREATED",
+                                    "CLOSED",
+                                    "EXECUTED"
+                                  ],
+                                  "title": "LoanStatus",
+                                  "type": "string"
+                                },
+                                "transferAccountNumber": {
+                                  "description": "Номер транзитного счета клиента кредитора",
+                                  "title": "Transferaccountnumber",
+                                  "type": "string"
+                                },
+                                "validDate": {
+                                  "description": "Дата закрытия кредита",
+                                  "title": "Validdate",
+                                  "type": "string"
+                                }
+                              },
+                              "required": [
+                                "productName",
+                                "contractNumber",
+                                "contractId",
+                                "amount",
+                                "baseRate",
+                                "overPrincipalTotal",
+                                "paidOverPrincipalTotal",
+                                "overPercentsTotal",
+                                "paidOverPercentsTotal",
+                                "penOverPercentsTotal",
+                                "paidPenOverPercentsTotal",
+                                "penOverPrincipalTotal",
+                                "paidPenOverPrincipalTotal",
+                                "issueDate",
+                                "validDate",
+                                "loanTerm",
+                                "remainAmount",
+                                "percentAccrued",
+                                "percentsOverDebt",
+                                "paidPercentsOverDebt",
+                                "status",
+                                "transferAccountNumber"
+                              ],
+                              "title": "ExpresscreditLoanInfo",
+                              "type": "object"
+                            },
+                            "nextPayment": {
+                              "description": "Следующий платеж",
+                              "properties": {
+                                "debtAmount": {
+                                  "description": "Основной долг",
+                                  "example": "1234.00",
+                                  "title": "Debtamount",
+                                  "type": "number"
+                                },
+                                "payedAmount": {
+                                  "description": "Оплаченная сумма",
+                                  "example": "1234.00",
+                                  "title": "Payedamount",
+                                  "type": "number"
+                                },
+                                "paymentAmount": {
+                                  "description": "Сумма платежа",
+                                  "example": "1234.00",
+                                  "title": "Paymentamount",
+                                  "type": "number"
+                                },
+                                "paymentDate": {
+                                  "description": "Дата платежа",
+                                  "title": "Paymentdate",
+                                  "type": "string"
+                                },
+                                "percentAmount": {
+                                  "description": "Проценты (комиссия)",
+                                  "example": "1234.00",
+                                  "title": "Percentamount",
+                                  "type": "number"
+                                },
+                                "remainAmount": {
+                                  "description": "Остаток основного долга",
+                                  "example": "1234.00",
+                                  "title": "Remainamount",
+                                  "type": "number"
+                                }
+                              },
+                              "required": [
+                                "paymentDate",
+                                "paymentAmount",
+                                "debtAmount",
+                                "percentAmount",
+                                "payedAmount"
+                              ],
+                              "title": "ExpresscreditLoanPayment",
+                              "type": "object"
+                            }
+                          },
+                          "required": [
+                            "info",
+                            "graphPayment"
+                          ],
+                          "title": "ExpresscreditLoan",
+                          "type": "object"
+                        },
+                        "title": "Loans",
+                        "type": "array"
+                      },
+                      "name": {
+                        "description": "Наименование клиента",
+                        "title": "Name",
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "id",
+                      "inn",
+                      "loans"
+                    ],
+                    "title": "ExpresscreditLoansChangeRequestModel",
+                    "type": "object"
+                  },
+                  "Risks": {
+                    "additionalProperties": true,
+                    "title": "Risks",
+                    "type": "object"
+                  }
+                },
+                "required": [
+                  "Data"
+                ],
+                "title": "ExpresscreditLoansChangeRequestDataModel",
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "Data": {
+                      "properties": {
+                        "success": {
+                          "title": "Success",
+                          "type": "boolean"
+                        }
+                      },
+                      "required": [
+                        "success"
+                      ],
+                      "title": "ExpresscreditSuccessResponseModel",
+                      "type": "object"
+                    },
+                    "Links": {
+                      "properties": {
+                        "self": {
+                          "examples": [
+                            "https://enter.tochka.com/uapi"
+                          ],
+                          "format": "uri",
+                          "maxLength": 2083,
+                          "minLength": 1,
+                          "title": "Self",
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "self"
+                      ],
+                      "title": "LinkModel",
+                      "type": "object"
+                    },
+                    "Meta": {
+                      "properties": {
+                        "totalPages": {
+                          "examples": [
+                            1
+                          ],
+                          "title": "Totalpages",
+                          "type": "integer"
+                        }
+                      },
+                      "required": [
+                        "totalPages"
+                      ],
+                      "title": "MetaModel",
+                      "type": "object"
+                    }
+                  },
+                  "required": [
+                    "Data",
+                    "Links",
+                    "Meta"
+                  ],
+                  "title": "ExpresscreditSuccessResponseDataModel",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "Errors": {
+                      "items": {
+                        "properties": {
+                          "errorCode": {
+                            "examples": [
+                              "HTTPBadRequest"
+                            ],
+                            "title": "Низкоуровневое текстовое описание ошибки",
+                            "type": "string"
+                          },
+                          "message": {
+                            "examples": [
+                              "Something going wrong"
+                            ],
+                            "maxLength": 603,
+                            "title": "Описание ошибки. Обрезается если длина ошибки превышает максимальное значение",
+                            "type": "string"
+                          },
+                          "url": {
+                            "examples": [
+                              "\"http://enter.tochka.com/open-banking/docs\""
+                            ],
+                            "title": "URL для помощи в устранении проблемы",
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "errorCode",
+                          "message",
+                          "url"
+                        ],
+                        "title": "BadRequestError",
+                        "type": "object"
+                      },
+                      "title": "Errors",
+                      "type": "array"
+                    },
+                    "code": {
+                      "examples": [
+                        "400"
+                      ],
+                      "maxLength": 40,
+                      "title": "Высокоуровневый текстовый код ошибки, необходимый для классификации.",
+                      "type": "string"
+                    },
+                    "id": {
+                      "examples": [
+                        "c397b21a-d998-4c4d-9471-e60eaf816b87"
+                      ],
+                      "maxLength": 40,
+                      "title": "Уникальный идентификатор ошибки, для целей аудита",
+                      "type": "string"
+                    },
+                    "message": {
+                      "examples": [
+                        "Что-то пошло не так"
+                      ],
+                      "maxLength": 600,
+                      "title": "Краткое сообщение об ошибке.",
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "id",
+                    "message",
+                    "Errors"
+                  ],
+                  "title": "BadRequestErrorResponse",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Bad Request"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "Errors": {
+                      "items": {
+                        "properties": {
+                          "errorCode": {
+                            "examples": [
+                              "HTTPUnauthorized"
+                            ],
+                            "title": "Низкоуровневое текстовое описание ошибки",
+                            "type": "string"
+                          },
+                          "message": {
+                            "examples": [
+                              "Something going wrong"
+                            ],
+                            "maxLength": 603,
+                            "title": "Описание ошибки. Обрезается если длина ошибки превышает максимальное значение",
+                            "type": "string"
+                          },
+                          "url": {
+                            "examples": [
+                              "\"http://enter.tochka.com/open-banking/docs\""
+                            ],
+                            "title": "URL для помощи в устранении проблемы",
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "errorCode",
+                          "message",
+                          "url"
+                        ],
+                        "title": "UnauthorizedError",
+                        "type": "object"
+                      },
+                      "title": "Errors",
+                      "type": "array"
+                    },
+                    "code": {
+                      "examples": [
+                        "401"
+                      ],
+                      "maxLength": 40,
+                      "title": "Высокоуровневый текстовый код ошибки, необходимый для классификации.",
+                      "type": "string"
+                    },
+                    "id": {
+                      "examples": [
+                        "c397b21a-d998-4c4d-9471-e60eaf816b87"
+                      ],
+                      "maxLength": 40,
+                      "title": "Уникальный идентификатор ошибки, для целей аудита",
+                      "type": "string"
+                    },
+                    "message": {
+                      "examples": [
+                        "Что-то пошло не так"
+                      ],
+                      "maxLength": 600,
+                      "title": "Краткое сообщение об ошибке.",
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "id",
+                    "message",
+                    "Errors"
+                  ],
+                  "title": "UnauthorizedErrorResponse",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "Errors": {
+                      "items": {
+                        "properties": {
+                          "errorCode": {
+                            "examples": [
+                              "HTTPForbidden"
+                            ],
+                            "title": "Низкоуровневое текстовое описание ошибки",
+                            "type": "string"
+                          },
+                          "message": {
+                            "examples": [
+                              "Something going wrong"
+                            ],
+                            "maxLength": 603,
+                            "title": "Описание ошибки. Обрезается если длина ошибки превышает максимальное значение",
+                            "type": "string"
+                          },
+                          "url": {
+                            "examples": [
+                              "\"http://enter.tochka.com/open-banking/docs\""
+                            ],
+                            "title": "URL для помощи в устранении проблемы",
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "errorCode",
+                          "message",
+                          "url"
+                        ],
+                        "title": "ForbiddenError",
+                        "type": "object"
+                      },
+                      "title": "Errors",
+                      "type": "array"
+                    },
+                    "code": {
+                      "examples": [
+                        "403"
+                      ],
+                      "maxLength": 40,
+                      "title": "Высокоуровневый текстовый код ошибки, необходимый для классификации.",
+                      "type": "string"
+                    },
+                    "id": {
+                      "examples": [
+                        "c397b21a-d998-4c4d-9471-e60eaf816b87"
+                      ],
+                      "maxLength": 40,
+                      "title": "Уникальный идентификатор ошибки, для целей аудита",
+                      "type": "string"
+                    },
+                    "message": {
+                      "examples": [
+                        "Что-то пошло не так"
+                      ],
+                      "maxLength": 600,
+                      "title": "Краткое сообщение об ошибке.",
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "id",
+                    "message",
+                    "Errors"
+                  ],
+                  "title": "ForbiddenErrorResponse",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "Errors": {
+                      "items": {
+                        "properties": {
+                          "errorCode": {
+                            "examples": [
+                              "HTTPNotFound"
+                            ],
+                            "title": "Низкоуровневое текстовое описание ошибки",
+                            "type": "string"
+                          },
+                          "message": {
+                            "examples": [
+                              "Something going wrong"
+                            ],
+                            "maxLength": 603,
+                            "title": "Описание ошибки. Обрезается если длина ошибки превышает максимальное значение",
+                            "type": "string"
+                          },
+                          "url": {
+                            "examples": [
+                              "\"http://enter.tochka.com/open-banking/docs\""
+                            ],
+                            "title": "URL для помощи в устранении проблемы",
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "errorCode",
+                          "message",
+                          "url"
+                        ],
+                        "title": "NotFoundError",
+                        "type": "object"
+                      },
+                      "title": "Errors",
+                      "type": "array"
+                    },
+                    "code": {
+                      "examples": [
+                        "404"
+                      ],
+                      "maxLength": 40,
+                      "title": "Высокоуровневый текстовый код ошибки, необходимый для классификации.",
+                      "type": "string"
+                    },
+                    "id": {
+                      "examples": [
+                        "c397b21a-d998-4c4d-9471-e60eaf816b87"
+                      ],
+                      "maxLength": 40,
+                      "title": "Уникальный идентификатор ошибки, для целей аудита",
+                      "type": "string"
+                    },
+                    "message": {
+                      "examples": [
+                        "Что-то пошло не так"
+                      ],
+                      "maxLength": 600,
+                      "title": "Краткое сообщение об ошибке.",
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "id",
+                    "message",
+                    "Errors"
+                  ],
+                  "title": "NotFoundErrorResponse",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "Errors": {
+                      "items": {
+                        "properties": {
+                          "errorCode": {
+                            "examples": [
+                              "HTTPInternalError"
+                            ],
+                            "title": "Низкоуровневое текстовое описание ошибки",
+                            "type": "string"
+                          },
+                          "message": {
+                            "examples": [
+                              "Something going wrong"
+                            ],
+                            "maxLength": 603,
+                            "title": "Описание ошибки. Обрезается если длина ошибки превышает максимальное значение",
+                            "type": "string"
+                          },
+                          "url": {
+                            "examples": [
+                              "\"http://enter.tochka.com/open-banking/docs\""
+                            ],
+                            "title": "URL для помощи в устранении проблемы",
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "errorCode",
+                          "message",
+                          "url"
+                        ],
+                        "title": "ErrorModel",
+                        "type": "object"
+                      },
+                      "title": "Подробное описание ошибок",
+                      "type": "array"
+                    },
+                    "code": {
+                      "examples": [
+                        "500"
+                      ],
+                      "maxLength": 40,
+                      "title": "Высокоуровневый текстовый код ошибки, необходимый для классификации.",
+                      "type": "string"
+                    },
+                    "id": {
+                      "examples": [
+                        "c397b21a-d998-4c4d-9471-e60eaf816b87"
+                      ],
+                      "maxLength": 40,
+                      "title": "Уникальный идентификатор ошибки, для целей аудита",
+                      "type": "string"
+                    },
+                    "message": {
+                      "examples": [
+                        "Что-то пошло не так"
+                      ],
+                      "maxLength": 600,
+                      "title": "Краткое сообщение об ошибке.",
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "id",
+                    "message",
+                    "Errors"
+                  ],
+                  "title": "ErrorResponse",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Server error"
+          }
+        },
+        "servers": [
+          {
+            "description": "Боевой сервер Production",
+            "url": "https://enter.tochka.com/uapi/"
+          },
+          {
+            "description": "Сервер песочницы",
+            "url": "https://enter.tochka.com/sandbox/v2/"
+          }
+        ],
+        "tags": [
+          "Работа с Экспресс кредитами"
+        ],
+        "x-portal-url": "https://developers.tochka.com/docs/express-credit/api/loans-change-expresscredit-api-version-loans-change-post"
+      }
+    },
+    "/expresscredit/{apiVersion}/offer": {
+      "post": {
+        "description": "Метод для передачи параметров кредита (предодоба)",
+        "operationId": "offer",
+        "parameters": [
+          {
+            "description": "Версия API",
+            "in": "path",
+            "name": "apiVersion",
+            "required": true,
+            "schema": {
+              "description": "Версия API",
+              "enum": [
+                "v1.0"
+              ],
+              "title": "ApiVersion",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "Data": {
+                    "properties": {
+                      "applicationId": {
+                        "description": "ID кредитной заявки",
+                        "title": "Applicationid",
+                        "type": "string"
+                      },
+                      "approvalDeadlineDate": {
+                        "description": "Дата, до которой действителен оффер",
+                        "format": "date-time",
+                        "title": "Approvaldeadlinedate",
+                        "type": "string"
+                      },
+                      "companyInn": {
+                        "description": "ИНН компании",
+                        "title": "Companyinn",
+                        "type": "string"
+                      },
+                      "offerPayload": {
+                        "description": "Данные по предложению",
+                        "properties": {
+                          "applicationUuid": {
+                            "description": "UUID кредитного договора",
+                            "title": "Applicationuuid",
+                            "type": "string"
+                          },
+                          "clientAmount": {
+                            "description": "Одобренная сумма в рублях",
+                            "example": "1234.00",
+                            "title": "Clientamount",
+                            "type": "number"
+                          },
+                          "maxTerm": {
+                            "description": "Максимальный срок кредита в месяцах",
+                            "title": "Maxterm",
+                            "type": "integer"
+                          },
+                          "minTerm": {
+                            "description": "Минимальный срок кредита в месяцах",
+                            "title": "Minterm",
+                            "type": "integer"
+                          },
+                          "productType": {
+                            "description": "Тип продукта",
+                            "enum": [
+                              "TL_SME"
+                            ],
+                            "title": "ProductType",
+                            "type": "string"
+                          },
+                          "rate": {
+                            "description": "Ставка по кредиту",
+                            "example": "1234.00",
+                            "title": "Rate",
+                            "type": "number"
+                          },
+                          "suretyUuid": {
+                            "description": "UUID договора поручительства",
+                            "title": "Suretyuuid",
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "clientAmount",
+                          "maxTerm",
+                          "minTerm",
+                          "rate",
+                          "productType",
+                          "applicationUuid",
+                          "suretyUuid"
+                        ],
+                        "title": "ExpresscreditOfferPayload",
+                        "type": "object"
+                      }
+                    },
+                    "required": [
+                      "applicationId",
+                      "companyInn",
+                      "offerPayload",
+                      "approvalDeadlineDate"
+                    ],
+                    "title": "ExpresscreditOfferRequestModel",
+                    "type": "object"
+                  },
+                  "Risks": {
+                    "additionalProperties": true,
+                    "title": "Risks",
+                    "type": "object"
+                  }
+                },
+                "required": [
+                  "Data"
+                ],
+                "title": "ExpresscreditOfferRequestDataModel",
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "Data": {
+                      "properties": {
+                        "success": {
+                          "title": "Success",
+                          "type": "boolean"
+                        }
+                      },
+                      "required": [
+                        "success"
+                      ],
+                      "title": "ExpresscreditSuccessResponseModel",
+                      "type": "object"
+                    },
+                    "Links": {
+                      "properties": {
+                        "self": {
+                          "examples": [
+                            "https://enter.tochka.com/uapi"
+                          ],
+                          "format": "uri",
+                          "maxLength": 2083,
+                          "minLength": 1,
+                          "title": "Self",
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "self"
+                      ],
+                      "title": "LinkModel",
+                      "type": "object"
+                    },
+                    "Meta": {
+                      "properties": {
+                        "totalPages": {
+                          "examples": [
+                            1
+                          ],
+                          "title": "Totalpages",
+                          "type": "integer"
+                        }
+                      },
+                      "required": [
+                        "totalPages"
+                      ],
+                      "title": "MetaModel",
+                      "type": "object"
+                    }
+                  },
+                  "required": [
+                    "Data",
+                    "Links",
+                    "Meta"
+                  ],
+                  "title": "ExpresscreditSuccessResponseDataModel",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "Errors": {
+                      "items": {
+                        "properties": {
+                          "errorCode": {
+                            "examples": [
+                              "HTTPBadRequest"
+                            ],
+                            "title": "Низкоуровневое текстовое описание ошибки",
+                            "type": "string"
+                          },
+                          "message": {
+                            "examples": [
+                              "Something going wrong"
+                            ],
+                            "maxLength": 603,
+                            "title": "Описание ошибки. Обрезается если длина ошибки превышает максимальное значение",
+                            "type": "string"
+                          },
+                          "url": {
+                            "examples": [
+                              "\"http://enter.tochka.com/open-banking/docs\""
+                            ],
+                            "title": "URL для помощи в устранении проблемы",
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "errorCode",
+                          "message",
+                          "url"
+                        ],
+                        "title": "BadRequestError",
+                        "type": "object"
+                      },
+                      "title": "Errors",
+                      "type": "array"
+                    },
+                    "code": {
+                      "examples": [
+                        "400"
+                      ],
+                      "maxLength": 40,
+                      "title": "Высокоуровневый текстовый код ошибки, необходимый для классификации.",
+                      "type": "string"
+                    },
+                    "id": {
+                      "examples": [
+                        "c397b21a-d998-4c4d-9471-e60eaf816b87"
+                      ],
+                      "maxLength": 40,
+                      "title": "Уникальный идентификатор ошибки, для целей аудита",
+                      "type": "string"
+                    },
+                    "message": {
+                      "examples": [
+                        "Что-то пошло не так"
+                      ],
+                      "maxLength": 600,
+                      "title": "Краткое сообщение об ошибке.",
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "id",
+                    "message",
+                    "Errors"
+                  ],
+                  "title": "BadRequestErrorResponse",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Bad Request"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "Errors": {
+                      "items": {
+                        "properties": {
+                          "errorCode": {
+                            "examples": [
+                              "HTTPUnauthorized"
+                            ],
+                            "title": "Низкоуровневое текстовое описание ошибки",
+                            "type": "string"
+                          },
+                          "message": {
+                            "examples": [
+                              "Something going wrong"
+                            ],
+                            "maxLength": 603,
+                            "title": "Описание ошибки. Обрезается если длина ошибки превышает максимальное значение",
+                            "type": "string"
+                          },
+                          "url": {
+                            "examples": [
+                              "\"http://enter.tochka.com/open-banking/docs\""
+                            ],
+                            "title": "URL для помощи в устранении проблемы",
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "errorCode",
+                          "message",
+                          "url"
+                        ],
+                        "title": "UnauthorizedError",
+                        "type": "object"
+                      },
+                      "title": "Errors",
+                      "type": "array"
+                    },
+                    "code": {
+                      "examples": [
+                        "401"
+                      ],
+                      "maxLength": 40,
+                      "title": "Высокоуровневый текстовый код ошибки, необходимый для классификации.",
+                      "type": "string"
+                    },
+                    "id": {
+                      "examples": [
+                        "c397b21a-d998-4c4d-9471-e60eaf816b87"
+                      ],
+                      "maxLength": 40,
+                      "title": "Уникальный идентификатор ошибки, для целей аудита",
+                      "type": "string"
+                    },
+                    "message": {
+                      "examples": [
+                        "Что-то пошло не так"
+                      ],
+                      "maxLength": 600,
+                      "title": "Краткое сообщение об ошибке.",
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "id",
+                    "message",
+                    "Errors"
+                  ],
+                  "title": "UnauthorizedErrorResponse",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "Errors": {
+                      "items": {
+                        "properties": {
+                          "errorCode": {
+                            "examples": [
+                              "HTTPForbidden"
+                            ],
+                            "title": "Низкоуровневое текстовое описание ошибки",
+                            "type": "string"
+                          },
+                          "message": {
+                            "examples": [
+                              "Something going wrong"
+                            ],
+                            "maxLength": 603,
+                            "title": "Описание ошибки. Обрезается если длина ошибки превышает максимальное значение",
+                            "type": "string"
+                          },
+                          "url": {
+                            "examples": [
+                              "\"http://enter.tochka.com/open-banking/docs\""
+                            ],
+                            "title": "URL для помощи в устранении проблемы",
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "errorCode",
+                          "message",
+                          "url"
+                        ],
+                        "title": "ForbiddenError",
+                        "type": "object"
+                      },
+                      "title": "Errors",
+                      "type": "array"
+                    },
+                    "code": {
+                      "examples": [
+                        "403"
+                      ],
+                      "maxLength": 40,
+                      "title": "Высокоуровневый текстовый код ошибки, необходимый для классификации.",
+                      "type": "string"
+                    },
+                    "id": {
+                      "examples": [
+                        "c397b21a-d998-4c4d-9471-e60eaf816b87"
+                      ],
+                      "maxLength": 40,
+                      "title": "Уникальный идентификатор ошибки, для целей аудита",
+                      "type": "string"
+                    },
+                    "message": {
+                      "examples": [
+                        "Что-то пошло не так"
+                      ],
+                      "maxLength": 600,
+                      "title": "Краткое сообщение об ошибке.",
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "id",
+                    "message",
+                    "Errors"
+                  ],
+                  "title": "ForbiddenErrorResponse",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "Errors": {
+                      "items": {
+                        "properties": {
+                          "errorCode": {
+                            "examples": [
+                              "HTTPNotFound"
+                            ],
+                            "title": "Низкоуровневое текстовое описание ошибки",
+                            "type": "string"
+                          },
+                          "message": {
+                            "examples": [
+                              "Something going wrong"
+                            ],
+                            "maxLength": 603,
+                            "title": "Описание ошибки. Обрезается если длина ошибки превышает максимальное значение",
+                            "type": "string"
+                          },
+                          "url": {
+                            "examples": [
+                              "\"http://enter.tochka.com/open-banking/docs\""
+                            ],
+                            "title": "URL для помощи в устранении проблемы",
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "errorCode",
+                          "message",
+                          "url"
+                        ],
+                        "title": "NotFoundError",
+                        "type": "object"
+                      },
+                      "title": "Errors",
+                      "type": "array"
+                    },
+                    "code": {
+                      "examples": [
+                        "404"
+                      ],
+                      "maxLength": 40,
+                      "title": "Высокоуровневый текстовый код ошибки, необходимый для классификации.",
+                      "type": "string"
+                    },
+                    "id": {
+                      "examples": [
+                        "c397b21a-d998-4c4d-9471-e60eaf816b87"
+                      ],
+                      "maxLength": 40,
+                      "title": "Уникальный идентификатор ошибки, для целей аудита",
+                      "type": "string"
+                    },
+                    "message": {
+                      "examples": [
+                        "Что-то пошло не так"
+                      ],
+                      "maxLength": 600,
+                      "title": "Краткое сообщение об ошибке.",
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "id",
+                    "message",
+                    "Errors"
+                  ],
+                  "title": "NotFoundErrorResponse",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "Errors": {
+                      "items": {
+                        "properties": {
+                          "errorCode": {
+                            "examples": [
+                              "HTTPInternalError"
+                            ],
+                            "title": "Низкоуровневое текстовое описание ошибки",
+                            "type": "string"
+                          },
+                          "message": {
+                            "examples": [
+                              "Something going wrong"
+                            ],
+                            "maxLength": 603,
+                            "title": "Описание ошибки. Обрезается если длина ошибки превышает максимальное значение",
+                            "type": "string"
+                          },
+                          "url": {
+                            "examples": [
+                              "\"http://enter.tochka.com/open-banking/docs\""
+                            ],
+                            "title": "URL для помощи в устранении проблемы",
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "errorCode",
+                          "message",
+                          "url"
+                        ],
+                        "title": "ErrorModel",
+                        "type": "object"
+                      },
+                      "title": "Подробное описание ошибок",
+                      "type": "array"
+                    },
+                    "code": {
+                      "examples": [
+                        "500"
+                      ],
+                      "maxLength": 40,
+                      "title": "Высокоуровневый текстовый код ошибки, необходимый для классификации.",
+                      "type": "string"
+                    },
+                    "id": {
+                      "examples": [
+                        "c397b21a-d998-4c4d-9471-e60eaf816b87"
+                      ],
+                      "maxLength": 40,
+                      "title": "Уникальный идентификатор ошибки, для целей аудита",
+                      "type": "string"
+                    },
+                    "message": {
+                      "examples": [
+                        "Что-то пошло не так"
+                      ],
+                      "maxLength": 600,
+                      "title": "Краткое сообщение об ошибке.",
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "id",
+                    "message",
+                    "Errors"
+                  ],
+                  "title": "ErrorResponse",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Server error"
+          }
+        },
+        "servers": [
+          {
+            "description": "Боевой сервер Production",
+            "url": "https://enter.tochka.com/uapi/"
+          },
+          {
+            "description": "Сервер песочницы",
+            "url": "https://enter.tochka.com/sandbox/v2/"
+          }
+        ],
+        "tags": [
+          "Работа с Экспресс кредитами"
+        ],
+        "x-portal-url": "https://developers.tochka.com/docs/express-credit/api/offer-expresscredit-api-version-offer-post"
+      }
+    }
+  },
+  "servers": [
+    {
+      "description": "Боевой сервер Production",
+      "url": "https://enter.tochka.com/uapi/"
+    },
+    {
+      "description": "Сервер песочницы",
+      "url": "https://enter.tochka.com/sandbox/v2/"
+    }
+  ]
+}

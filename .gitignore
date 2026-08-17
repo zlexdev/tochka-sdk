@@ -1,0 +1,32 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+.venv/
+venv/
+
+# Tooling caches
+.mypy_cache/
+.ruff_cache/
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Внутренний журнал проекта: ловушки, долги, «не проверено». Полезен при работе,
+# но это рабочие заметки, а не документация — читателю репозитория они не адресованы.
+CLAUDE.md
+
+# Scratch — anything here is disposable by definition, never committed
+.trash/
+.plans/
+*.log
+*.tmp
+
+# Editors / OS
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+desktop.ini

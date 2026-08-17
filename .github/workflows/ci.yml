@@ -1,0 +1,75 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python: ["3.11", "3.12", "3.13"]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+          cache: pip
+
+      - name: Install
+        run: pip install -e ".[dev,webhooks]"
+
+      - name: Lint
+        run: |
+          ruff check tochka dev scripts tests
+          ruff format --check tochka
+
+      - name: Types
+        run: mypy tochka
+
+      - name: Tests
+        run: pytest tests -q
+
+      # The spec corpus is committed, so this catches an endpoint that lost its method —
+      # a regeneration that silently dropped one looks identical to an endpoint the bank
+      # never had.
+      - name: Spec coverage
+        run: python scripts/lint_spec_bindings.py --strict
+
+  regen:
+    # Regenerating must be a no-op on a clean tree: a hand-edit of a generated file would
+    # otherwise survive until the next unrelated regeneration silently reverted it.
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install
+        run: pip install -e ".[dev]"
+
+      - name: Regenerate from the committed spec
+        run: |
+          python -m dev.codegen generate
+          python scripts/generate_method_reference.py
+
+      - name: Fail if the generated surface drifted
+        run: |
+          if ! git diff --quiet; then
+            echo "::error::Сгенерированные файлы отличаются от закоммиченных."
+            echo "Запустите: python -m dev.codegen generate"
+            git diff --stat
+            exit 1
+          fi

@@ -1,0 +1,682 @@
+{
+  "operations": {
+    "get-customer-info-info-v-1-0-customers-customer-code-get": {
+      "api": {
+        "description": "Метод получения информации по конкретному клиенту",
+        "info": {
+          "title": "Tochka.API",
+          "version": "v1.93.0-stable"
+        },
+        "method": "get",
+        "operationId": "get_customer_info_info_v1_0_customers__customerCode__get",
+        "parameters": [
+          {
+            "description": "Идентификатор клиента",
+            "example": "300000092",
+            "in": "path",
+            "name": "customerCode",
+            "required": true,
+            "schema": {
+              "description": "Идентификатор клиента",
+              "title": "Customercode",
+              "type": "string"
+            }
+          }
+        ],
+        "path": "/info/v1.0/customers/{customerCode}",
+        "postman": {
+          "auth": {
+            "oauth2": [
+              {
+                "key": "scope",
+                "type": "any",
+                "value": "ReadAccountsBasic ReadAccountsDetail ReadBalances ReadStatements ReadCustomerData ReadSBPData EditSBPData CreatePaymentForSign CreatePaymentOrder ReadAcquiringData MakeAcquiringOperation ManageInvoiceData ManageWebhookData"
+              },
+              {
+                "key": "accessTokenUrl",
+                "type": "any",
+                "value": "https://enter.tochka.com/connect/token"
+              },
+              {
+                "key": "grant_type",
+                "type": "any",
+                "value": "password_credentials"
+              }
+            ],
+            "type": "oauth2"
+          },
+          "description": {
+            "content": "Метод получения информации по конкретному клиенту",
+            "type": "text/plain"
+          },
+          "header": [
+            {
+              "key": "Accept",
+              "value": "application/json"
+            }
+          ],
+          "method": "GET",
+          "name": "Get Customer Info",
+          "url": {
+            "host": [
+              "{{baseUrl}}"
+            ],
+            "path": [
+              "info",
+              "v1.0",
+              "customers",
+              ":customerCode"
+            ],
+            "query": [],
+            "variable": [
+              {
+                "description": {
+                  "content": "(Required) Идентификатор клиента",
+                  "type": "text/plain"
+                },
+                "disabled": false,
+                "key": "customerCode",
+                "type": "any",
+                "value": ""
+              }
+            ]
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "Data": {
+                      "properties": {
+                        "customerCode": {
+                          "examples": [
+                            "300000092"
+                          ],
+                          "maxLength": 9,
+                          "title": "Уникальный код клиента",
+                          "type": "string"
+                        },
+                        "customerOgrn": {
+                          "examples": [
+                            "319665800211661"
+                          ],
+                          "title": "ОГРН или ОГРНИП",
+                          "type": "string"
+                        },
+                        "customerType": {
+                          "examples": [
+                            "Business"
+                          ],
+                          "title": "Тип клиента (юридическое лицо)",
+                          "type": "string"
+                        },
+                        "fullName": {
+                          "examples": [
+                            "Индивидуальный Предприниматель Тест"
+                          ],
+                          "title": "Полное наименование",
+                          "type": "string"
+                        },
+                        "isResident": {
+                          "examples": [
+                            true
+                          ],
+                          "title": "Признак резидента",
+                          "type": "boolean"
+                        },
+                        "kpp": {
+                          "examples": [
+                            "668501001"
+                          ],
+                          "title": "КПП",
+                          "type": "string"
+                        },
+                        "legalAddress": {
+                          "examples": [
+                            "119002, г. Москва, Староконюшенный пер., д. 10"
+                          ],
+                          "title": "Юридический адрес",
+                          "type": "string"
+                        },
+                        "physicalAddress": {
+                          "examples": [
+                            "119002, г. Москва, Староконюшенный пер., д. 10"
+                          ],
+                          "title": "Фактический адрес",
+                          "type": "string"
+                        },
+                        "postalAddress": {
+                          "examples": [
+                            "119002, г. Москва, Староконюшенный пер., д. 10"
+                          ],
+                          "title": "Почтовый адрес",
+                          "type": "string"
+                        },
+                        "shortName": {
+                          "examples": [
+                            "ИП Тест"
+                          ],
+                          "title": "Краткое наименование",
+                          "type": "string"
+                        },
+                        "taxCode": {
+                          "examples": [
+                            "660000000000"
+                          ],
+                          "title": "ИНН",
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "customerCode",
+                        "customerType",
+                        "isResident",
+                        "fullName"
+                      ],
+                      "title": "CustomerInfoWithAddressModel",
+                      "type": "object"
+                    },
+                    "Links": {
+                      "properties": {
+                        "self": {
+                          "examples": [
+                            "https://enter.tochka.com/uapi"
+                          ],
+                          "format": "uri",
+                          "maxLength": 2083,
+                          "minLength": 1,
+                          "title": "Self",
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "self"
+                      ],
+                      "title": "LinkModel",
+                      "type": "object"
+                    },
+                    "Meta": {
+                      "properties": {
+                        "totalPages": {
+                          "examples": [
+                            1
+                          ],
+                          "title": "Totalpages",
+                          "type": "integer"
+                        }
+                      },
+                      "required": [
+                        "totalPages"
+                      ],
+                      "title": "MetaModel",
+                      "type": "object"
+                    }
+                  },
+                  "required": [
+                    "Data",
+                    "Links",
+                    "Meta"
+                  ],
+                  "title": "CustomerInfoResponseDataModel",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "Errors": {
+                      "items": {
+                        "properties": {
+                          "errorCode": {
+                            "examples": [
+                              "Validation Error"
+                            ],
+                            "title": "Низкоуровневое текстовое описание ошибки",
+                            "type": "string"
+                          },
+                          "message": {
+                            "examples": [
+                              "Something going wrong"
+                            ],
+                            "maxLength": 603,
+                            "title": "Описание ошибки. Обрезается если длина ошибки превышает максимальное значение",
+                            "type": "string"
+                          },
+                          "url": {
+                            "examples": [
+                              "https://developers.tochka.com/"
+                            ],
+                            "title": "URL для помощи в устранении проблемы",
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "errorCode",
+                          "message",
+                          "url"
+                        ],
+                        "title": "Validation Error",
+                        "type": "object"
+                      },
+                      "title": "Errors",
+                      "type": "array"
+                    },
+                    "code": {
+                      "examples": [
+                        "400"
+                      ],
+                      "maxLength": 40,
+                      "title": "Высокоуровневый текстовый код ошибки, необходимый для классификации.",
+                      "type": "string"
+                    },
+                    "id": {
+                      "examples": [
+                        "c397b21a-d998-4c4d-9471-e60eaf816b87"
+                      ],
+                      "maxLength": 40,
+                      "title": "Уникальный идентификатор ошибки, для целей аудита",
+                      "type": "string"
+                    },
+                    "message": {
+                      "examples": [
+                        "Что-то пошло не так"
+                      ],
+                      "maxLength": 600,
+                      "title": "Краткое сообщение об ошибке.",
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "id",
+                    "message",
+                    "Errors"
+                  ],
+                  "title": "Validation ErrorResponse",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Bad Request"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "Errors": {
+                      "items": {
+                        "properties": {
+                          "errorCode": {
+                            "examples": [
+                              "Something going wrong"
+                            ],
+                            "title": "Низкоуровневое текстовое описание ошибки",
+                            "type": "string"
+                          },
+                          "message": {
+                            "examples": [
+                              "Something going wrong"
+                            ],
+                            "maxLength": 603,
+                            "title": "Описание ошибки. Обрезается если длина ошибки превышает максимальное значение",
+                            "type": "string"
+                          },
+                          "url": {
+                            "examples": [
+                              "https://developers.tochka.com/"
+                            ],
+                            "title": "URL для помощи в устранении проблемы",
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "errorCode",
+                          "message",
+                          "url"
+                        ],
+                        "title": "Something going wrong",
+                        "type": "object"
+                      },
+                      "title": "Errors",
+                      "type": "array"
+                    },
+                    "code": {
+                      "examples": [
+                        "403"
+                      ],
+                      "maxLength": 40,
+                      "title": "Высокоуровневый текстовый код ошибки, необходимый для классификации.",
+                      "type": "string"
+                    },
+                    "id": {
+                      "examples": [
+                        "c397b21a-d998-4c4d-9471-e60eaf816b87"
+                      ],
+                      "maxLength": 40,
+                      "title": "Уникальный идентификатор ошибки, для целей аудита",
+                      "type": "string"
+                    },
+                    "message": {
+                      "examples": [
+                        "Что-то пошло не так"
+                      ],
+                      "maxLength": 600,
+                      "title": "Краткое сообщение об ошибке.",
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "id",
+                    "message",
+                    "Errors"
+                  ],
+                  "title": "Something going wrongResponse",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "Errors": {
+                      "items": {
+                        "properties": {
+                          "errorCode": {
+                            "examples": [
+                              "HTTPNotFound"
+                            ],
+                            "title": "Низкоуровневое текстовое описание ошибки",
+                            "type": "string"
+                          },
+                          "message": {
+                            "examples": [
+                              "Something going wrong"
+                            ],
+                            "maxLength": 603,
+                            "title": "Описание ошибки. Обрезается если длина ошибки превышает максимальное значение",
+                            "type": "string"
+                          },
+                          "url": {
+                            "examples": [
+                              "https://developers.tochka.com/"
+                            ],
+                            "title": "URL для помощи в устранении проблемы",
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "errorCode",
+                          "message",
+                          "url"
+                        ],
+                        "title": "HTTPNotFound",
+                        "type": "object"
+                      },
+                      "title": "Errors",
+                      "type": "array"
+                    },
+                    "code": {
+                      "examples": [
+                        "404"
+                      ],
+                      "maxLength": 40,
+                      "title": "Высокоуровневый текстовый код ошибки, необходимый для классификации.",
+                      "type": "string"
+                    },
+                    "id": {
+                      "examples": [
+                        "c397b21a-d998-4c4d-9471-e60eaf816b87"
+                      ],
+                      "maxLength": 40,
+                      "title": "Уникальный идентификатор ошибки, для целей аудита",
+                      "type": "string"
+                    },
+                    "message": {
+                      "examples": [
+                        "Что-то пошло не так"
+                      ],
+                      "maxLength": 600,
+                      "title": "Краткое сообщение об ошибке.",
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "id",
+                    "message",
+                    "Errors"
+                  ],
+                  "title": "HTTPNotFoundResponse",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "424": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "Errors": {
+                      "items": {
+                        "properties": {
+                          "errorCode": {
+                            "examples": [
+                              "Something going wrong"
+                            ],
+                            "title": "Низкоуровневое текстовое описание ошибки",
+                            "type": "string"
+                          },
+                          "message": {
+                            "examples": [
+                              "Something going wrong"
+                            ],
+                            "maxLength": 603,
+                            "title": "Описание ошибки. Обрезается если длина ошибки превышает максимальное значение",
+                            "type": "string"
+                          },
+                          "url": {
+                            "examples": [
+                              "https://developers.tochka.com/"
+                            ],
+                            "title": "URL для помощи в устранении проблемы",
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "errorCode",
+                          "message",
+                          "url"
+                        ],
+                        "title": "Something going wrong",
+                        "type": "object"
+                      },
+                      "title": "Errors",
+                      "type": "array"
+                    },
+                    "code": {
+                      "examples": [
+                        "424"
+                      ],
+                      "maxLength": 40,
+                      "title": "Высокоуровневый текстовый код ошибки, необходимый для классификации.",
+                      "type": "string"
+                    },
+                    "id": {
+                      "examples": [
+                        "c397b21a-d998-4c4d-9471-e60eaf816b87"
+                      ],
+                      "maxLength": 40,
+                      "title": "Уникальный идентификатор ошибки, для целей аудита",
+                      "type": "string"
+                    },
+                    "message": {
+                      "examples": [
+                        "Что-то пошло не так"
+                      ],
+                      "maxLength": 600,
+                      "title": "Краткое сообщение об ошибке.",
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "id",
+                    "message",
+                    "Errors"
+                  ],
+                  "title": "Something going wrongResponse",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Fail dependent service"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "Errors": {
+                      "items": {
+                        "properties": {
+                          "errorCode": {
+                            "examples": [
+                              "HTTPInternalError"
+                            ],
+                            "title": "Низкоуровневое текстовое описание ошибки",
+                            "type": "string"
+                          },
+                          "message": {
+                            "examples": [
+                              "Something going wrong"
+                            ],
+                            "maxLength": 603,
+                            "title": "Описание ошибки. Обрезается если длина ошибки превышает максимальное значение",
+                            "type": "string"
+                          },
+                          "url": {
+                            "examples": [
+                              "https://developers.tochka.com/"
+                            ],
+                            "title": "URL для помощи в устранении проблемы",
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "errorCode",
+                          "message",
+                          "url"
+                        ],
+                        "title": "ErrorModel",
+                        "type": "object"
+                      },
+                      "title": "Подробное описание ошибок",
+                      "type": "array"
+                    },
+                    "code": {
+                      "examples": [
+                        "500"
+                      ],
+                      "maxLength": 40,
+                      "title": "Высокоуровневый текстовый код ошибки, необходимый для классификации.",
+                      "type": "string"
+                    },
+                    "id": {
+                      "examples": [
+                        "c397b21a-d998-4c4d-9471-e60eaf816b87"
+                      ],
+                      "maxLength": 40,
+                      "title": "Уникальный идентификатор ошибки, для целей аудита",
+                      "type": "string"
+                    },
+                    "message": {
+                      "examples": [
+                        "Что-то пошло не так"
+                      ],
+                      "maxLength": 600,
+                      "title": "Краткое сообщение об ошибке.",
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "id",
+                    "message",
+                    "Errors"
+                  ],
+                  "title": "ErrorResponse",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Server error"
+          }
+        },
+        "security": [
+          {
+            "Необходимые разрешения": [
+              "ReadCustomerData"
+            ]
+          }
+        ],
+        "securitySchemes": {
+          "Необходимые разрешения": {
+            "flows": {
+              "password": {
+                "scopes": {
+                  "CreatePaymentForSign": "Создание платежа на подпись",
+                  "CreatePaymentOrder": "Подписание платежа",
+                  "EditSBPData": "Изменение информации в сервисе СБП",
+                  "MakeAcquiringOperation": "Совершение операций через платёжные ссылки",
+                  "ManageInvoiceData": "Выставление счетов и создание закрывающих документов",
+                  "ManageWebhookData": "Получение вебхуков",
+                  "ReadAccountsBasic": "Получение базовой информации о счёте",
+                  "ReadAccountsDetail": "Получение детальной информации о счёте",
+                  "ReadAcquiringData": "Получение информации о платёжной ссылке",
+                  "ReadBalances": "Получение баланса",
+                  "ReadCustomerData": "Получение информации о клиенте",
+                  "ReadSBPData": "Получение информации в сервисе СБП",
+                  "ReadStatements": "Получение выписок по счету"
+                },
+                "tokenUrl": "https://enter.tochka.com/connect/token"
+              }
+            },
+            "type": "oauth2"
+          }
+        },
+        "servers": [
+          {
+            "description": "Продуктовая среда",
+            "url": "https://enter.tochka.com/uapi/"
+          },
+          {
+            "description": "Песочница",
+            "url": "https://enter.tochka.com/sandbox/v2/"
+          }
+        ],
+        "tags": [
+          "Работа с клиентами"
+        ]
+      },
+      "description": "Метод получения информации по конкретному клиенту",
+      "slug": "get-customer-info-info-v-1-0-customers-customer-code-get",
+      "title": "Get Customer Info"
+    }
+  },
+  "product": "info"
+}
