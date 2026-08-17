@@ -1,18 +1,26 @@
-# tochka-sdk
+<p align="center">
+  <img src="https://github.com/zlexdev.png" alt="tochka-sdk" width="96" height="96" style="border-radius:24px">
+</p>
 
-[![ci](https://github.com/zlexdev/tochka-sdk/actions/workflows/ci.yml/badge.svg)](https://github.com/zlexdev/tochka-sdk/actions/workflows/ci.yml)
-[![python](https://img.shields.io/badge/python-3.11%2B-blue)](https://pypi.org/project/tochka-sdk/)
+<h1 align="center">tochka-sdk</h1>
 
-Асинхронный SDK для Open API Точка Банка. 167 методов, сгенерированных из спецификации банка, с типами, моделями ответов и приёмом вебхуков.
+<p align="center">
+  <strong>Асинхронный SDK для Open API Точка Банка: 167 методов, сгенерированных из спецификаций банка</strong>
+</p>
 
-```python
-from tochka import Client
+<p align="center">
+  <a href="https://github.com/zlexdev/tochka-sdk/actions/workflows/ci.yml"><img src="https://img.shields.io/github/actions/workflow/status/zlexdev/tochka-sdk/ci.yml?branch=main&style=for-the-badge&label=CI" alt="CI"></a>
+  <a href="https://pypi.org/project/tochka-sdk/"><img src="https://img.shields.io/pypi/v/tochka-sdk?style=for-the-badge&color=blue" alt="PyPI"></a>
+  <a href="https://www.python.org/downloads/"><img src="https://img.shields.io/badge/python-3.11%2B-blue?style=for-the-badge" alt="Python 3.11+"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-blue.svg?style=for-the-badge" alt="MIT"></a>
+</p>
 
-async with Client(token="...", customer_code="300123456") as client:
-    balances = await client.get_balances_list()
-    for balance in balances.data.balance:
-        print(balance.account_id, balance.amount.amount, balance.amount.currency)
-```
+**tochka-sdk** — типизированный асинхронный клиент Open API Точка Банка: счета, платежи, СБП,
+выписки, эквайринг, номинальные счета и выплаты. Своей спецификации банк не публикует, поэтому
+она собирается с портала разработчика, а поверхность SDK генерируется из неё — покрытие
+сверяется командой, а не на глаз: **167 операций спецификации, 167 методов**.
+
+[Документация](docs/README.md) · [Установка](docs/sdk/installation.md) · [Все методы](docs/sdk/methods.md) · [Про сам банк](docs/tochka/README.md) · [Для ИИ-агентов](docs/for_ai/index.md) · [Issues](https://github.com/zlexdev/tochka-sdk/issues)
 
 ## Установка
 
@@ -20,305 +28,68 @@ async with Client(token="...", customer_code="300123456") as client:
 pip install tochka-sdk
 ```
 
-Приём вебхуков — `pip install "tochka-sdk[webhooks]"`.
+```python
+import asyncio
+from tochka import Client
+
+
+async def main() -> None:
+    async with Client(token="...", customer_code="300123456") as client:
+        balances = await client.get_balances_list()
+        for balance in balances.data.balance:
+            print(balance.account_id, balance.amount.amount, balance.amount.currency)
+
+
+asyncio.run(main())
+```
+
+Приём вебхуков — `pip install "tochka-sdk[webhooks]"`. Первый вызов без договора делается в
+песочнице: `Client(token="working_token", environment=Environment.SANDBOX)`.
+
+Подробнее — [гайд по установке](docs/sdk/installation.md).
 
 ## Что покрыто
 
-| Продукт | Методов | О чём |
+| Продукт | Методов | Что внутри |
 |---|---|---|
 | `tochka-api` | 71 | счета, балансы, платежи, выписки, СБП, платёжные ссылки, вебхуки |
 | `cyclops` | 47 | номинальные счета: бенефициары, сделки, виртуальные счета |
-| `pay-gateway` | 26 | интернет-эквайринг: ссылки, возвраты, токены |
-| `medusa` | 19 | маркетплейс: заказы и получатели выплат |
+| `pay-gateway` | 26 | интернет-эквайринг: формы оплаты, возвраты, токены карт |
+| `medusa` | 19 | маркетплейс: заказы и выплаты получателям по СБП и на карты |
 | `express-credit` | 3 | экспресс-кредиты |
-| `info` | 1 | справка по клиенту |
+| `info` | 1 | справка о клиенте |
 
-Покрытие проверяется командой, а не на глаз:
+Шесть продуктов живут на трёх разных хостах, и SDK выбирает нужный сам — по продукту метода,
+а не по одному базовому URL на весь клиент.
 
-```bash
-python scripts/lint_spec_bindings.py --strict
-# Операций в спеке: 167, {'bound': 167, 'unbound': 0, 'duplicate': 0, 'orphan': 0}
-```
+## Примеры
 
-## Песочница
+### Приём оплаты по QR СБП с опросом статуса
 
-```python
-from tochka import Client, Environment
-
-async with Client(token="working_token", environment=Environment.SANDBOX) as client:
-    ...
-```
-
-## Полный сценарий: выставить счёт и дождаться оплаты
-
-Оплата ловится **двумя способами**, и они взаимозаменяемы: вебхуком (мгновенно, банк
-приходит сам) или опросом метода (когда принимающего URL нет — крон, скрипт, десктоп).
-Ниже оба, вокруг одной и той же операции.
-
-### Шаг 1. Создать платёжную ссылку
+Когда принимающего URL нет: скрипт, десктоп, касса. Запрос-ответ, без входящих соединений.
 
 ```python
 from tochka import Client
-from tochka.enums.payment_links import CreatePaymentOperationDataPaymentMode
+from tochka.enums.sbp_qr_codes import RegisterQrCodeDataQrcType as QrcType
 
-async with Client(token=TOKEN, customer_code="300123456") as client:
-    operation = await client.create_payment_operation(
-        amount=1990.0,
-        customer_code="300123456",
-        purpose="Оплата заказа № 1024",
-        payment_mode=[CreatePaymentOperationDataPaymentMode.SBP,
-                      CreatePaymentOperationDataPaymentMode.CARD],
-        redirect_url="https://shop.example/thanks",
-        fail_redirect_url="https://shop.example/failed",
-        ttl=60,                      # ссылка живёт час
+async with Client(token=TOKEN) as client:
+    qr = await client.register_qr_code(
+        account_id="40802810000000000000/044525104",   # ваш счёт
+        merchant_id="MA0000000000",                    # ТСП из get_merchants_list()
+        payment_purpose="Заказ № 1024",
+        qrc_type=QrcType.V_02,      # динамический: сумма зашита в QR
+        amount=10_000,              # копейки
+        currency="RUB",
+        ttl=60,
     )
+    print(qr.data.payload)          # https://qr.nspk.ru/... — это и есть ссылка на оплату
 
-    link = operation.data.payment_link       # это отдаём покупателю
-    operation_id = operation.data.operation_id   # это сохраняем у себя в заказе
+    status = await client.get_qr_codes_payment_status(qrc_ids=qr.data.qrc_id)
 ```
 
-`operation_id` — ключ, по которому платёж потом опознаётся и в вебхуке, и при опросе.
-Сохраните его рядом с заказом до того, как показать ссылку.
+### Событийный приём: вебхуки
 
-### Шаг 2а. Принять оплату вебхуком
-
-```python
-from fastapi import FastAPI, Request, Response
-from tochka.webhooks import WebhookReceiver, WebhookType
-
-app = FastAPI()
-receiver = WebhookReceiver()
-
-
-@receiver.on(WebhookType.ACQUIRING_INTERNET_PAYMENT)
-async def paid(event) -> None:
-    order = await orders.find_by_operation(event.operation_id)
-    if order is None or order.paid:
-        return                       # повтор доставки — не двойное зачисление
-    await orders.mark_paid(order.id, amount=event.amount, payment_id=event.payment_id)
-
-
-@app.post("/tochka/webhook")
-async def hook(request: Request) -> Response:
-    try:
-        await receiver.handle(await request.body())
-    except Exception:
-        # 200 говорит банку «доставлено» — отдавать его на необработанном событии нельзя,
-        # иначе платёж потерян: банк не пришлёт его снова.
-        return Response(status_code=500)
-    return Response(status_code=200)
-```
-
-Подписка на события делается один раз, из того же SDK:
-
-```python
-from tochka.enums.webhooks import CreateWebhookWebhooksList as Event
-
-await client.create_webhook(
-    client_id=APP_CLIENT_ID,
-    url="https://shop.example/tochka/webhook",
-    webhooks_list=[Event.INCOMINGPAYMENT, Event.ACQUIRINGINTERNETPAYMENT],
-)
-```
-
-Банк проверит доступность URL тестовой отправкой на каждое событие — если в ответ придёт
-не 200, вебхук не создастся. Только HTTPS, только порт 443.
-
-### Шаг 2б. Принять оплату опросом — если вебхук некуда принимать
-
-```python
-import asyncio
-from tochka.enums.payment_links import GetPaymentOperationInfoResponseDataOperationStatus as Status
-
-FINAL = {Status.EXPIRED, Status.REFUNDED, Status.REFUNDED_PARTIALLY}
-
-
-async def wait_for_payment(client, operation_id: str, *, timeout: float = 3600) -> bool:
-    """Опрашивать статус, пока не оплатят или не истечёт срок ссылки."""
-    loop = asyncio.get_running_loop()
-    deadline = loop.time() + timeout
-    while loop.time() < deadline:
-        info = await client.get_payment_operation_info(operation_id=operation_id)
-        status = info.data.operation[0].status      # операция приходит списком
-        if status is Status.APPROVED:
-            return True
-        if status in FINAL:
-            return False
-        await asyncio.sleep(15)
-    return False
-```
-
-Оба пути дают одно и то же и дополняют друг друга: вебхук как основной канал, опрос — как
-подстраховка для заказов, по которым уведомление не пришло. Сам банк советует ровно это.
-
-### Шаг 3. Вернуть деньги
-
-```python
-refund = await client.refund_payment_operation(
-    operation_id=operation_id,
-    amount=1990.0,
-)
-```
-
-## Приём по QR-коду СБП
-
-```python
-from tochka.enums.sbp_qr_codes import RegisterQrCodeDataQrcType
-
-qr = await client.register_qr_code(
-    account_id="40802810500000000001/044525104",
-    merchant_id=MERCHANT_ID,
-    payment_purpose="Оплата заказа № 1024",
-    qrc_type=RegisterQrCodeDataQrcType.V_02,   # 01 — статический, 02 — динамический
-    amount=199000,                # копейки
-    currency="RUB",
-    ttl=60,
-)
-
-status = await client.get_qr_codes_payment_status(qrc_ids=qr.data.qrc_id)
-```
-
-Событие оплаты приедет тем же приёмником, тип — `WebhookType.INCOMING_SBP_PAYMENT`.
-
-## Аналитика по выписке
-
-Выписка формируется асинхронно: сначала заказ, потом чтение готового документа.
-
-```python
-from datetime import date, timedelta
-from tochka.models.statements import InitStatementDataStatement
-
-account_id = "40802810500000000001/044525104"
-
-started = await client.init_statement(
-    statement=InitStatementDataStatement(
-        account_id=account_id,
-        start_date_time=date.today() - timedelta(days=30),
-        end_date_time=date.today(),
-    ),
-)
-
-statement = await client.get_statement(
-    account_id=account_id,
-    statement_id=started.data.statement.statement_id,
-)
-```
-
-### Оборот по контрагентам за месяц
-
-```python
-from collections import defaultdict
-from decimal import Decimal
-
-incoming: dict[str, Decimal] = defaultdict(Decimal)
-
-for block in statement.data.statement:
-    for transaction in block.transaction or []:
-        if transaction.credit_debit_indicator != "Credit":
-            continue
-        payer = transaction.debtor_party.name if transaction.debtor_party else "не указан"
-        incoming[payer] += Decimal(str(transaction.amount.amount))
-
-for payer, total in sorted(incoming.items(), key=lambda pair: pair[1], reverse=True)[:10]:
-    print(f"{total:>14,.2f} ₽  {payer}")
-```
-
-### Расходы по назначению платежа
-
-```python
-outgoing: dict[str, Decimal] = defaultdict(Decimal)
-
-for block in statement.data.statement:
-    for transaction in block.transaction or []:
-        if transaction.credit_debit_indicator == "Credit":
-            continue
-        purpose = (transaction.description or "").split(".")[0][:60]
-        outgoing[purpose] += Decimal(str(transaction.amount.amount))
-```
-
-Суммы складывайте только `Decimal` — `float` из JSON теряет копейки на больших оборотах.
-
-### Сводный остаток по всем счетам
-
-```python
-balances = await client.get_balances_list()
-
-total = sum(
-    Decimal(str(balance.amount.amount))
-    for balance in balances.data.balance
-    if balance.credit_debit_indicator == "Credit"
-)
-```
-
-### Сверка: что банк считает оплаченным, а мы — нет
-
-```python
-paid_by_bank = {
-    transaction.payment_id
-    for block in statement.data.statement
-    for transaction in block.transaction or []
-    if transaction.credit_debit_indicator == "Credit"
-}
-
-missing = paid_by_bank - await orders.known_payment_ids()
-```
-
-## Регулярные списания (подписки)
-
-```python
-subscription = await client.create_subscription(
-    amount=590.0,
-    customer_code="300123456",
-    purpose="Подписка «Про», месяц",
-    save_card=True,
-    recurring=True,
-)
-
-# следующий месяц — списание без участия клиента
-await client.charge_subscription(operation_id=subscription.data.operation_id, amount=590.0)
-```
-
-## Пагинация
-
-Пагинируемый метод возвращает курсор — запрос не уходит, пока его не дождались или не начали обходить:
-
-```python
-first_page = await client.get_subscriptions(customer_code="300123456")
-
-async for page in client.get_subscriptions(customer_code="300123456"):
-    ...
-
-async for item in client.get_subscriptions(customer_code="300123456").items():
-    ...
-```
-
-Точка пагинирует двумя способами — `page`/`perPage` и `limit`/`offset`; оба скрыты за одним курсором.
-
-## Методы на моделях
-
-Объект, пришедший в ответе, знает свой клиент, поэтому следующий вызов не требует повторять идентификаторы:
-
-```python
-status = await payment.get_payment_status()   # request_id подставится из самого объекта
-```
-
-## Ошибки
-
-```python
-from tochka import ApiError, NotFoundError, PermissionDeniedError, RateLimitError
-
-try:
-    await client.get_balance_info(account_id="...")
-except PermissionDeniedError as error:
-    print(error.code)      # AccessDenied — из Errors[0].errorCode
-    print(error.error_id)  # идентификатор для обращения в поддержку
-```
-
-Повторы выполняются сами: 429 и 5xx на идемпотентных вызовах, с экспоненциальной паузой и учётом `Retry-After`.
-
-## Вебхуки
-
-Точка присылает `POST` с телом `text/plain`, в котором лежит **строка JWT**, подписанная RS256. Подпись проверяется публичным ключом банка, который скачивается и обновляется автоматически.
+Продакшн-путь. Банк присылает событие сам, опрашивать ничего не нужно.
 
 ```python
 from fastapi import FastAPI, Request, Response
@@ -329,46 +100,120 @@ receiver = WebhookReceiver()
 
 
 @receiver.on(WebhookType.INCOMING_PAYMENT)
-async def on_payment(event):
-    print(event.payment_id, event.payer.name, event.purpose)
+async def credited(event) -> None:
+    await orders.mark_paid(event.payment_id, amount=event.payer.amount)
 
 
-@app.post("/tochka")
+@app.post("/tochka/webhook")
 async def hook(request: Request) -> Response:
-    await receiver.handle(await request.body())   # именно body(), не json()
+    try:
+        await receiver.handle(await request.body())   # body(), не json()
+    except Exception:
+        return Response(status_code=500)              # 200 = «доставлено», повтора не будет
     return Response(status_code=200)
 ```
 
-Ответ, отличный от 200, заставит банк повторить доставку 30 раз с интервалом 10 секунд. Подключить вебхук можно только по HTTPS на порт 443.
+Тело вебхука — не JSON, а строка JWT, подписанная RS256. Подпись проверяется публичным ключом
+банка, который SDK скачивает и обновляет сам.
 
-Пять событий: `incomingPayment`, `outgoingPayment`, `incomingSbpPayment`, `incomingSbpB2BPayment`, `acquiringInternetPayment`.
+### Обход больших выборок и аналитика
 
-## Обновление под новую версию API
+Пагинация спрятана за курсором: запрос не уходит, пока курсор не начали обходить.
 
-Спецификации банка нет в открытом виде — портал отдаёт её по частям, поэтому она скачивается и собирается:
+```python
+from collections import defaultdict
+from datetime import date, timedelta
+from decimal import Decimal
 
-```bash
-python scripts/download_tochka_specs.py    # портал -> docs/tochka/api/*.json
-python -m dev.codegen scrape               # -> dev/generated/openapi/*.json
-python -m dev.codegen generate             # -> tochka/{methods,models,enums,facade}/
-python -m dev.codegen check                # ruff + mypy
-python scripts/lint_spec_bindings.py --strict
+from tochka.models.statements import InitStatementDataStatement
+
+started = await client.init_statement(
+    statement=InitStatementDataStatement(
+        account_id=account_id,
+        start_date_time=date.today() - timedelta(days=30),
+        end_date_time=date.today(),
+    ),
+)
+statement = await client.get_statement(
+    account_id=account_id,
+    statement_id=started.data.statement.statement_id,
+)
+
+incoming: dict[str, Decimal] = defaultdict(Decimal)
+for block in statement.data.statement:
+    for transaction in block.transaction or []:
+        if transaction.credit_debit_indicator == "Credit":
+            payer = transaction.debtor_party.name if transaction.debtor_party else "не указан"
+            incoming[payer] += Decimal(str(transaction.amount.amount))
+
+# страницы и элементы — один и тот же метод, без *_paginated двойников
+async for page in client.get_subscription_list(customer_code=code):
+    ...
+async for item in client.get_subscription_list(customer_code=code).items():
+    ...
 ```
 
-Файлы с шапкой `AUTO-GENERATED` правит генератор; руками написаны только клиент, транспорт, авторизация, пагинация и вебхуки.
+### Несколько продуктов банка одним клиентом
 
-## Документация
+Выплаты (`medusa`) и номинальные счета (`cyclops`) — отдельные продукты со своими хостами и
+подключением. Каждому можно дать свой токен; хост подставляется по методу.
 
-[`docs/`](docs/README.md) — два набора:
+```python
+from tochka import Client, Config
+from tochka.types import Product
 
-- **по SDK**: [быстрый старт](docs/sdk/quickstart.md) · [все 167 методов](docs/sdk/methods.md) ·
-  [пагинация](docs/sdk/pagination.md) · [вебхуки](docs/sdk/webhooks.md) ·
-  [устройство](docs/sdk/architecture.md)
-- **по Точка Банку**: [как устроен API](docs/tochka/README.md) ·
-  [авторизация](docs/tochka/auth.md) · [выплаты](docs/tochka/payouts.md) ·
-  [вебхуки](docs/tochka/webhooks.md) · [песочница](docs/tochka/sandbox.md) ·
-  [ловушки](docs/tochka/traps.md)
+config = Config(
+    token=OPEN_BANKING_TOKEN,
+    product_tokens={Product.MEDUSA: MEDUSA_TOKEN},
+    customer_code="300123456",
+)
 
-## Лицензия
+async with Client(config=config) as client:
+    recipient = await client.create_recipient(ext_id=f"ref-{user_id}", name=full_name)
+    await client.add_sbp_recipient_payout_method(
+        recipient_ext_id=recipient.data.ext_id,
+        sbp_payout_method=payout_method,
+    )
+    await client.create_order_v3(ext_id=f"payout-{period}-{user_id}", ...)  # выплата по СБП
+```
 
-MIT.
+## Ошибки и повторы
+
+```python
+from tochka import ApiError, NotFoundError, PermissionDeniedError, RateLimitError
+
+try:
+    await client.get_balance_info(account_id=account_id)
+except PermissionDeniedError as error:
+    error.code       # AccessDenied — из Errors[0].errorCode, а не HTTP-статус строкой
+    error.error_id   # идентификатор для поддержки банка
+```
+
+Повторы делаются сами: 429 и 5xx на идемпотентных вызовах, экспоненциальная пауза с джиттером,
+`Retry-After` банка имеет приоритет. Ответ, не совпавший с моделью, поднимает
+`ResponseValidationError`, а не деградирует в `dict`: изменение формата видно на месте вызова.
+
+## Разработка
+
+```bash
+git clone https://github.com/zlexdev/tochka-sdk.git && cd tochka-sdk
+pip install -e ".[dev,webhooks]"
+pytest tests -q                                 # 34 теста, сеть не нужна
+python scripts/lint_spec_bindings.py --strict   # 167 операций ↔ 167 методов
+```
+
+Методы не пишутся руками — они генерируются: `python -m dev.codegen generate`. Файл с шапкой
+`AUTO-GENERATED` править бесполезно, CI проверяет, что повторная генерация ничего не меняет.
+Детали — [устройство SDK](docs/sdk/architecture.md) и [генератор](dev/codegen/_MODULE.md).
+
+## Community
+
+Баги и предложения — [issues](https://github.com/zlexdev/tochka-sdk/issues/new/choose).
+Pull request'ы приветствуются: перед отправкой прогоните гейт из раздела «Разработка» —
+тот же набор гоняет CI.
+
+<a href="https://github.com/zlexdev"><img src="https://github.com/zlexdev.png" width="48" height="48" style="border-radius:50%" alt="zlexdev"></a>
+
+## License
+
+[MIT](LICENSE) © 2026 tochka-sdk contributors
